@@ -1,9 +1,13 @@
-function [] = animate(t, phi, th, psi)
+function [] = animate2D(t, phi, th)
 % Animate according to provided timestamps and positions
 
 r_k = 0.125;        % Ball radius
 r_w = 0.06;         % Omniwheel radius
 l = 0.339;          % Height of center of gravity
+
+% calculate psi from phi and theta using linking equation
+psi_func = @(phi, th) -((r_k/r_w)*(phi-th)-th);
+psi = psi_func(phi, th);
 
 FPS = 20;
 t_anim = 0:1/FPS:max(t);
@@ -11,8 +15,7 @@ phi_anim = interp1(t, phi, t_anim);
 th_anim = interp1(t, th, t_anim);
 psi_anim = interp1(t, psi, t_anim);
 
-
-v = VideoWriter('animation.mp4', 'MPEG-4');
+v = VideoWriter('animation2D.mp4', 'MPEG-4');
 open(v);
 
 figure();

@@ -1,17 +1,16 @@
 clear
+close all
 
-N = 21; % Number of nodes
-
-% Create our state and input vectors symbolically
-q = sym('q', [4, 1]);
-u = sym('u', [1, 1]);
-
+%% Dynamics Function Generation
 syms m_tot m_k m_a m_w  % Mass parameters
 syms r_tot r_k r_w      % Radius parameters
 syms TH_k TH_w TH_a     % Inertial parameters
 syms gam l g            % Misc parameters
-syms t y         % Simulation parameters
+syms t y                % Simulation parameters
 
+% Symbolic state and input vectors
+q = sym('q', [4, 1]);
+u = sym('u', [1, 1]);
 
 % Mass term in Langrangian formulation (Eqn. 2.22)
 M_x = [m_tot*r_k^2 + TH_k + (r_k/r_w)^2*TH_w, -(r_k/(r_w^2))*r_tot*TH_w+gam*r_k*cos(q(3)); ...
@@ -23,30 +22,42 @@ C_x = [-r_k*gam*sin(q(3)*q(4)^2); 0];
 % Gravitational term in Lagrangian formulation (Eqn. 2.24)
 G_x = [0; -g*sin(q(3))*gam];
 
-% Non-potential force term in Lagrangian formulation (Eqn. 2.17+Eqn. 2.18)
+% Non-potential force term in Lagrangian formulation (Eqn. 2.17 + Eqn. 2.18)
 f_np = [(r_k/r_w)*u; u-(1+(r_k/r_w))*u];
 
 % Solve for ddq in M(q, dq)*ddq + C(q, dq) + G(q) = f_np, simplify
 ddq = M_x\(f_np - G_x - C_x);
 ddq = subs(ddq, {m_tot, r_tot, gam}, {m_k+m_a+m_w, r_k+r_w, l*m_a+(r_k+r_w)*m_w});
 
+% Substitute in values for physical parameters
 ddq = subs(ddq, {TH_a,TH_k,TH_w,g,l,m_a,m_k,m_w,r_k,r_w}, {4.76, 0.0239, 0.00236, 9.81, 0.339, 9.2, 2.29, 3, 0.125, 0.06});
-eqs = [q(2); ddq(1); q(4); ddq(2)];
-%%
 
-A = subs(jacobian(eqs, q), {q(1), q(2), q(3), q(4)}, {0, 0, 0, 0});
-B = subs(jacobian(eqs, u), {u, q(1), q(2), q(3), q(4)}, {0, 0, 0, 0, 0});
+% Full dynamics equation
+dynamics = [q(2); ddq(1); q(4); ddq(2)];
 
-dq = A*q+B*u;
 
-%%
+%% MPC Function Generation
+N = 21; % Number of nodes
 
 % Define symbolic variables for every state at each node
 qN = sym('qN', [4, N]);
 uN = sym('uN', [1, N]);
 
-% 1st-order Dynamics for each of the states at each node
+% Linearized dynamics at upper position
+A = subs(jacobian(dynamics, q), {q(1), q(2), q(3), q(4)}, {0, 0, 0, 0});
+B = subs(jacobian(dynamics, u), {u, q(1), q(2), q(3), q(4)}, {0, 0, 0, 0, 0});
+
+% Linearized dynamics at upper position for every state at each node
 dqN = A*qN+B*uN;
+
+% Linearized dynamics at each node for every state at each node
+% dqN = zeros(4,N);
+% for i = 1:N
+%    % Linearized dynamics at current state
+%    Ai = jacobian(dynamics, qN(:, i));
+%    Bi = jacobian(dynamics, uN(:, i));
+%    dqN(:, i) = Ai*qN(:, i) + Bi*uN(:, i);
+% end
 
 % Defect constraints
 % Explicit Euler
@@ -60,14 +71,14 @@ defect = qNext - qPrev - dqPrev*dt;
 defect = defect(:);
 
 syms Fmax; % Max force
+syms thmax; % Max lean angle
 q0 = sym('q0', [4, 1]);
 
 % IC constraints
 ic_constraint = q0-qN(:, 1);
 
-th_lim = deg2rad(4);
-% Inequality
-limit_constraints = [uN(:) - Fmax; -uN(:) - Fmax; qN(3, N) - th_lim; -qN(3, N) - th_lim];
+% Inequality constraints on force and lean angle
+limit_constraints = [uN(:) - Fmax; -uN(:) - Fmax; qN(3, N) - thmax; -qN(3, N) - thmax];
 
 eqCon = [defect; ic_constraint];
 ineqCon = limit_constraints;
@@ -97,9 +108,8 @@ beq = -subs(eqCon, x, zeros(size(x)));
 % Export Matlab functions
 matlabFunction(H,'File','Hfunc','Vars',{Q,R,qdes,T})
 matlabFunction(c,'File','cfunc','Vars',{Q,R,qdes,T})
-matlabFunction(A_cons,'File','Afunc','Vars',{T,Fmax})
-matlabFunction(b_cons,'File','bfunc','Vars',{T,Fmax})
-matlabFunction(Aeq,'File','Aeqfunc','Vars',{q0,T,Fmax})
-matlabFunction(beq,'File','beqfunc','Vars',{q0,T,Fmax})
-matlabFunction(dq, "File", "odefun", "Vars", {t, q, u})
-matlabFunction(eqs, "File", "eqs", "Vars", {t, q, u})
+matlabFunction(A_cons,'File','Afunc','Vars',{T,Fmax,thmax})
+matlabFunction(b_cons,'File','bfunc','Vars',{T,Fmax,thmax})
+matlabFunction(Aeq,'File','Aeqfunc','Vars',{q0,T,Fmax,thmax})
+matlabFunction(beq,'File','beqfunc','Vars',{q0,T,Fmax,thmax})
+matlabFunction(dynamics, "File", "dynamfunc", "Vars", {t, q, u})
