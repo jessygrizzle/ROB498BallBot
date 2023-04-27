@@ -17,7 +17,7 @@ M_x = [m_tot*r_k^2 + TH_k + (r_k/r_w)^2*TH_w, -(r_k/(r_w^2))*r_tot*TH_w+gam*r_k*
     -(r_k/(r_w^2))*r_tot*TH_w+gam*r_k*cos(q(3)), ((r_tot^2)/(r_w^2))*TH_w + TH_a + m_a*l^2 + m_w*r_tot^2];
 
 % Coriolis term in Langrangian formulation (Eqn. 2.23)
-C_x = [-r_k*gam*sin(q(3)*q(4)^2); 0];
+C_x = [-r_k*gam*sin(q(3))*q(4)^2; 0];
 
 % Gravitational term in Lagrangian formulation (Eqn. 2.24)
 G_x = [0; -g*sin(q(3))*gam];

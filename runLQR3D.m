@@ -22,7 +22,7 @@ R = eye(2);
 
 % Initial and goal states
 q0 = [0 0 0 0 0 0 0 0]';
-qdes = [5 0 0 0 3 0 0 0]';
+qdes = [6/0.125 0 0 0 2/0.125 0 0 0]';
 
 % Get Gain Matrix, K, with LQR
 K = lqr(A,B,Q,R);
@@ -36,9 +36,7 @@ tspan = [0 10]; % simulation timespan
 
 
 %% Plotting and Animation
-animate3D(tout, qout(:,1), qout(:,5), qout(:,3), qout(:,7));
+animate3D(tout, qout(:,1), qout(:,5), qout(:,3), qout(:,7), 'LQR3D.mp4');
 
 plot(tout, qout);
 legend("\phi x", "d\phi x", "\theta x", "d\theta x", "\phi y", "d\phi y", "\theta y", "d\theta y")
-
-% animate2D(tout, qout(:, 1), qout(:, 3), 'LQR_2D.mp4');

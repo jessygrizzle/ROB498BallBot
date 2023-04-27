@@ -1,4 +1,4 @@
-function [] = animate3D(t, phi_x, phi_y, th_x, th_y)
+function [] = animate3D(t, phi_x, phi_y, th_x, th_y, title)
 % Animate according to provided timestamps and positions
 
 r_k = 0.125;        % Ball radius
@@ -44,7 +44,7 @@ wheel_y = wheel_y_func(r_w, wheel_U(:), wheel_V(:))';
 
 %%
 
-v = VideoWriter('animation2Dfast.mp4', 'MPEG-4');
+v = VideoWriter(title, 'MPEG-4');
 open(v);
 
 figure();
@@ -76,9 +76,9 @@ for iter = 1:numel(t_anim)
     axis equal
     xlim([-0.2 0.8])
     ylim([-0.2 0.8])
-    xlabel('x')
-    ylabel('y')
-    zlabel('z')
+    xlabel('x (m)')
+    ylabel('y (m)')
+    zlabel('z (m)')
     axis([r_k*min(phi_x)-l, r_k*max(phi_x)+l, r_k*min(phi_y)-l, r_k*max(phi_y)+l, -0.01, r_k+l+0.05])
     view([10, 25]) % 10 25
     drawnow

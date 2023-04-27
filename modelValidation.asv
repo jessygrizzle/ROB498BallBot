@@ -1,32 +1,52 @@
 clear
 close all
 
-% m_k = 2.29;         % Ball mass
-% m_w = 3;            % Virtual actuating wheel mass
-% m_a = 9.2;          % Body mass
-% r_k = 0.125;        % Ball radius
-% r_w = 0.06;         % Omniwheel radius
-% r_a = 0.1;          % Body radius
-% l = 0.339;          % Height of center of gravity
-% TH_k = 0.0239;      % Ball inertia
-% TH_w = 0.00236;     % Total inertia of actuating wheel (?)
-% TH_wxy = 0.00945;   % Inertia of actuating wheel in xy plane
-% TH_a = 4.76;        % Total inertia of body
-% TH_axy = 0.092;     % Inertia of body in xy plane
-% g = 9.81;           % Gravitational acceleration
-
+%% Dynamics Functions for Validation Scenarios
 % dynamics function with zero torque
 odeNoInput = @(t, q) dynamfunc(t, q, 0);
 
 % dynamics function with constant torque
-odeConstInput = @(t, q) dynamfunc(t, q, 2);
+odeConstInput = @(t, q) dynamfunc(t, q, 3);
 
+
+%% Validation Scenario 1
 % simulation with no torque from upright equilibrium
+[tout, qout] = ode45(odeNoInput, [0 30], [0 0 0 0]');
+% animate2D(tout, qout(:,1), qout(:,3), 'upright_no_torque_2D.mp4');
+upright_energy = calculateEnergies(qout(:,2), qout(:,3), qout(:,4));
+figure
+plot(tout, upright_energy);
+ylim([upright_energy(1)-1 upright_energy(1)+1]);
+ylabel('Total System Energy (J)');
+xlabel('Time (s)');
+title('Energy For
 
+
+%% Validation Scenario 2
 % simulation with no torque from left of equilibrium
+[tout, qout] = ode45(odeNoInput, [0 30], [0 0 -0.2 0]');
+% animate2D(tout, qout(:,1), qout(:,3), 'left_no_torque_2D.mp4');
+tilted_energy = calculateEnergies(qout(:,2), qout(:,3), qout(:,4));
+figure
+plot(tout, tilted_energy);
+ylim([tilted_energy(1)-1 tilted_energy(1)+1]);
+ylabel('Total System Energy (J)');
+xlabel('Time (s)');
 
-% simulation with no torque from right of equilibrium
 
-% simulation with consta
-[t, y] = ode45(dynam, [0, 10], [0; 0; 0; 0]);
-animate(t, y(:, 1), y(:, 3), psi(y(:, 1), y(:, 3)));
+%% Validation Scenario 3
+% simulation with no torque with initial velocity
+[tout, qout] = ode45(odeNoInput, [0 30], [0 -2 -4 0]');
+% animate2D(tout, qout(:,1), qout(:,3), 'velocity_no_torque_2D.mp4');
+moving_energy = calculateEnergies(qout(:,2), qout(:,3), qout(:,4));
+figure
+plot(tout, moving_energy);
+ylim([moving_energy(1)-1 moving_energy(1)+1]);
+ylabel('Total System Energy (J)');
+xlabel('Time (s)');
+
+
+%% Validation Scenario 4
+% simulation with constant torque  from right of equilibrium
+[tout, qout] = ode45(odeConstInput, [0 10], [0 0 0.5 0]');
+% animate2D(tout, qout(:,1), qout(:,3), 'right_const_torque_2D.mp4');

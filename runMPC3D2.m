@@ -22,7 +22,7 @@ r_k = 0.125; % Ball radius
 q0x = [0; 0; 0; 0];
 qdesx = [6/r_k; 0; 0; 0];
 q0y = [0; 0; 0; 0];
-qdesy = [6/r_k; 0; 0; 0];
+qdesy = [2/r_k; 0; 0; 0];
 
 % simulation parameters
 Tfinal = 10; % total simulation time
@@ -78,7 +78,7 @@ end
 
 
 %% Plotting and Animation
+% animate3D(t_all, q_all(:,1), q_all(:,5), q_all(:,3), q_all(:,7), 'MPC3D.mp4');
+
 plot(t_all, q_all);
 legend("\phi x", "d\phi x", "\theta x", "d\theta x", "\phi y", "d\phi y", "\theta y", "d\theta y")
-
-animate3D(t_all, q_all(:,1), q_all(:,5), q_all(:,3), q_all(:,7));
