@@ -1,4 +1,4 @@
-function [] = animate2D(t, phi, th)
+function [] = animate2D(t, phi, th, title)
 % Animate according to provided timestamps and positions
 
 r_k = 0.125;        % Ball radius
@@ -15,7 +15,7 @@ phi_anim = interp1(t, phi, t_anim);
 th_anim = interp1(t, th, t_anim);
 psi_anim = interp1(t, psi, t_anim);
 
-v = VideoWriter('animation2D.mp4', 'MPEG-4');
+v = VideoWriter(title, 'MPEG-4');
 open(v);
 
 figure();

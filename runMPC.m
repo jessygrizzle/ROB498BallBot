@@ -5,11 +5,11 @@ close all
 % MPC cost parameters
 Q = zeros(4,4);
 Q(1,1) = 1; % penalty on ball angle (position)
-Q(3,3) = 1; % penalty on lean angle
+Q(3,3) = 1000; % penalty on lean angle
 R = 1; % penalty on torque
 
 % MPC time parameters
-T = 2; % finite time horizon
+T = 4; % finite time horizon
 Ts = 0.1; % sample time
 
 % MPC limit constraints
@@ -18,7 +18,7 @@ thmax = deg2rad(15); % max allowable lean angle
 
 % MPC initial and desired final conditions
 q0 = [0; 0; 0; 0];
-qdes = [10; 0; 0; 0];
+qdes = [100; 0; 0; 0];
 
 % simulation parameters
 Tfinal = 10; % total simulation time
@@ -61,4 +61,4 @@ end
 plot(t_all, q_all);
 legend("\phi", "d\phi", "\theta", "d\theta")
 
-animate2D(t_all, q_all(:, 1), q_all(:, 3));
+animate2D(t_all, q_all(:, 1), q_all(:, 3), 'MPC_2D.mp4');

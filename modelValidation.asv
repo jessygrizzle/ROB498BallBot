@@ -19,16 +19,14 @@ close all
 odeNoInput = @(t, q) dynamfunc(t, q, 0);
 
 % dynamics function with constant torque
-odeConstInput = @(t, q) dynamfunc(t, q, 3);
+odeConstInput = @(t, q) dynamfunc(t, q, 2);
 
 % simulation with no torque from upright equilibrium
-[tout, qout] = ode45(odeNoInput, [0 10], [0 0 0 0]');
-animate2D(tout, qout(:,1), qout(:,3), 'upright_no_torque_2D.mp4');
 
 % simulation with no torque from left of equilibrium
-[tout, qout] = ode45(odeNoInput, [0 10], [0 0 -0.2 0]');
-animate2D(tout, qout(:,1), qout(:,3), 'left_no_torque_2D.mp4');
 
-% simulation with constant torque  from right of equilibrium
-[tout, qout] = ode45(odeConstInput, [0 10], [0 0 0.5 0]');
-animate2D(tout, qout(:,1), qout(:,3), 'right_const_torque_2D.mp4');
+% simulation with no torque from right of equilibrium
+
+% simulation with consta
+[t, y] = ode45(dynam, [0, 10], [0; 0; 0; 0]);
+animate(t, y(:, 1), y(:, 3), psi(y(:, 1), y(:, 3)));

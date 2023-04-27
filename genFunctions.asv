@@ -1,6 +1,7 @@
 clear
+close all
 
-%% Dynamics Equation Generation
+%% Dynamics Function Generation
 syms m_tot m_k m_a m_w  % Mass parameters
 syms r_tot r_k r_w      % Radius parameters
 syms TH_k TH_w TH_a     % Inertial parameters
@@ -41,22 +42,14 @@ N = 21; % Number of nodes
 % Define symbolic variables for every state at each node
 qN = sym('qN', [4, N]);
 uN = sym('uN', [1, N]);
+q0 = sym('q0', [4, 1]);
 
-% Linearized dynamics at upper position
-A = subs(jacobian(dynamics, q), {q(1), q(2), q(3), q(4)}, {0, 0, 0, 0});
-B = subs(jacobian(dynamics, u), {u, q(1), q(2), q(3), q(4)}, {0, 0, 0, 0, 0});
+% Linearized dynamics at current state q0
+A = subs(jacobian(dynamics, q), {u(1), q(1), q(2), q(3), q(4)}, {0, q0(1), q0(2), q0(3), q0(4)});
+B = subs(jacobian(dynamics, u(1)), {u(1), q(1), q(2), q(3), q(4)}, {0, q0(1), q0(2), q0(3), q0(4)});
 
-% Linearized dynamics at upper position for every state at each node
-% dqN = A*qN+B*uN;
-
-% Linearized dynamics at each node for every state at each node
-dqN = zeros(4,N);
-for i = 1:N
-   % Linearized dynamics at current state
-   Ai = jacobian(dynamics, qN(:, i));
-   Bi = jacobian(dynamics, uN(:, i));
-   dqN(:, i) = Ai*qN(:, i) + Bi*uN(i)
-end
+% Linearized dynamics at current state q0 up for every state at each node
+dqN = A*qN+B*uN;
 
 % Defect constraints
 % Explicit Euler
@@ -71,7 +64,7 @@ defect = defect(:);
 
 syms Fmax; % Max force
 syms thmax; % Max lean angle
-q0 = sym('q0', [4, 1]);
+syms dphimax; % Max lean
 
 % IC constraints
 ic_constraint = q0-qN(:, 1);

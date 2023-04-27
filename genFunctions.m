@@ -42,22 +42,14 @@ N = 21; % Number of nodes
 % Define symbolic variables for every state at each node
 qN = sym('qN', [4, N]);
 uN = sym('uN', [1, N]);
+q0 = sym('q0', [4, 1]);
 
-% Linearized dynamics at upper position
-A = subs(jacobian(dynamics, q), {q(1), q(2), q(3), q(4)}, {0, 0, 0, 0});
-B = subs(jacobian(dynamics, u), {u, q(1), q(2), q(3), q(4)}, {0, 0, 0, 0, 0});
+% Linearized dynamics at current state q0
+A = subs(jacobian(dynamics, q), {u(1), q(1), q(2), q(3), q(4)}, {0, q0(1), q0(2), q0(3), q0(4)});
+B = subs(jacobian(dynamics, u(1)), {u(1), q(1), q(2), q(3), q(4)}, {0, q0(1), q0(2), q0(3), q0(4)});
 
-% Linearized dynamics at upper position for every state at each node
+% Linearized dynamics at current state q0 up for every state at each node
 dqN = A*qN+B*uN;
-
-% Linearized dynamics at each node for every state at each node
-% dqN = zeros(4,N);
-% for i = 1:N
-%    % Linearized dynamics at current state
-%    Ai = jacobian(dynamics, qN(:, i));
-%    Bi = jacobian(dynamics, uN(:, i));
-%    dqN(:, i) = Ai*qN(:, i) + Bi*uN(:, i);
-% end
 
 % Defect constraints
 % Explicit Euler
@@ -72,13 +64,13 @@ defect = defect(:);
 
 syms Fmax; % Max force
 syms thmax; % Max lean angle
-q0 = sym('q0', [4, 1]);
+syms dphimax; % Max wheel velocity
 
 % IC constraints
 ic_constraint = q0-qN(:, 1);
 
 % Inequality constraints on force and lean angle
-limit_constraints = [uN(:) - Fmax; -uN(:) - Fmax; qN(3, N) - thmax; -qN(3, N) - thmax];
+limit_constraints = [uN(:) - Fmax; -uN(:) - Fmax; qN(3, :)' - thmax; -qN(3, :)' - thmax; qN(2, :)' - dphimax; -qN(2, :)' - dphimax];
 
 eqCon = [defect; ic_constraint];
 ineqCon = limit_constraints;
@@ -108,8 +100,8 @@ beq = -subs(eqCon, x, zeros(size(x)));
 % Export Matlab functions
 matlabFunction(H,'File','Hfunc','Vars',{Q,R,qdes,T})
 matlabFunction(c,'File','cfunc','Vars',{Q,R,qdes,T})
-matlabFunction(A_cons,'File','Afunc','Vars',{T,Fmax,thmax})
-matlabFunction(b_cons,'File','bfunc','Vars',{T,Fmax,thmax})
-matlabFunction(Aeq,'File','Aeqfunc','Vars',{q0,T,Fmax,thmax})
-matlabFunction(beq,'File','beqfunc','Vars',{q0,T,Fmax,thmax})
+matlabFunction(A_cons,'File','Afunc','Vars',{T,Fmax,thmax,dphimax})
+matlabFunction(b_cons,'File','bfunc','Vars',{T,Fmax,thmax,dphimax})
+matlabFunction(Aeq,'File','Aeqfunc','Vars',{q0,T,Fmax,thmax,dphimax})
+matlabFunction(beq,'File','beqfunc','Vars',{q0,T,Fmax,thmax,dphimax})
 matlabFunction(dynamics, "File", "dynamfunc", "Vars", {t, q, u})

@@ -1,11 +1,14 @@
 clear
 close all
 
-%% LQR
+%% LQR 3D
 % Symbolic state and input vectors
-q = sym('q', [4, 1]);
-u = sym('u', [1, 1]);
+q = sym('q', [8, 1]); % qx; qy
+u = sym('u', [2, 1]); % Tx; Ty
 syms t;
+
+% Combining planar dynamics
+dynamic3D = @(time, q3D, u3D) [dynamfunc(
 
 % Linearized dynamics at upper position
 A = subs(jacobian(dynamfunc(t, q, u), q), {q(1), q(2), q(3), q(4)}, {0, 0, 0, 0});
