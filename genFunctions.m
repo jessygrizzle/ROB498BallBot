@@ -97,7 +97,8 @@ b_cons = -subs(ineqCon, x, zeros(size(x)));
 Aeq = jacobian(eqCon, x);
 beq = -subs(eqCon, x, zeros(size(x)));
 
-% Export Matlab functions
+
+%% Export Matlab functions
 matlabFunction(H,'File','Hfunc','Vars',{Q,R,qdes,T})
 matlabFunction(c,'File','cfunc','Vars',{Q,R,qdes,T})
 matlabFunction(A_cons,'File','Afunc','Vars',{T,Fmax,thmax,dphimax})

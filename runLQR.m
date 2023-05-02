@@ -14,12 +14,16 @@ A = double(A);
 B = double(B);
 
 % Define quadratic cost for infinite time horizon
-Q = eye(4);
+Q = 0.000000001*eye(4);
+Q(1,1) = 1; % penalty on ball angle (position)
+Q(2,2) = 0; % penalty on ball velocity
+Q(3,3) = 1000; % penalty on lean angle
+Q(4,4) = 0; % penalty on lean velocity
 R = 1;
 
 % Initial and goal states
 q0 = [0 0 0 0]';
-qdes = [50 0 0 0]';
+qdes = [6/0.125 0 0 0]';
 
 % Get Gain Matrix, K, with LQR
 K = lqr(A,B,Q,R);
@@ -33,7 +37,8 @@ tspan = [0 10]; % simulation timespan
 
 
 %% Plotting and Animation
-plot(tout, qout);
-legend("\phi", "d\phi", "\theta", "d\theta")
+animate2D(tout, qout(:, 1), qout(:, 3), 'LQR_2D.mp4')
 
-animate2D(tout, qout(:, 1), qout(:, 3), 'LQR_2D.mp4');
+figure
+plot(tout, qout)
+legend("\phi", "d\phi", "\theta", "d\theta")

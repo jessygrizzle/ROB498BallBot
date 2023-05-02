@@ -17,7 +17,12 @@ A = double(A);
 B = double(B);
 
 % Define quadratic cost for infinite time horizon
-Q = eye(8);
+Q = 0.000000001*eye(4);
+Q(1,1) = 1; % penalty on ball angle (position)
+Q(2,2) = 0; % penalty on ball velocity
+Q(3,3) = 1000; % penalty on lean angle
+Q(4,4) = 0; % penalty on lean velocity
+Q = blkdiag(Q,Q);
 R = eye(2);
 
 % Initial and goal states
@@ -36,7 +41,8 @@ tspan = [0 10]; % simulation timespan
 
 
 %% Plotting and Animation
-animate3D(tout, qout(:,1), qout(:,5), qout(:,3), qout(:,7), 'LQR3D.mp4');
+animate3D(tout, qout(:,1), qout(:,5), qout(:,3), qout(:,7), 'LQR_3D.mp4')
 
-plot(tout, qout);
+figure
+plot(tout, qout)
 legend("\phi x", "d\phi x", "\theta x", "d\theta x", "\phi y", "d\phi y", "\theta y", "d\theta y")

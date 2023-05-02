@@ -5,20 +5,23 @@ close all
 % MPC cost parameters
 Q = zeros(4,4);
 Q(1,1) = 1; % penalty on ball angle (position)
+Q(2,2) = 0; % penalty on ball velocity
 Q(3,3) = 1000; % penalty on lean angle
+Q(4,4) = 0; % penalty on lean velocity
 R = 1; % penalty on torque
 
 % MPC time parameters
-T = 4; % finite time horizon
+T = 8; % finite time horizon
 Ts = 0.1; % sample time
 
 % MPC limit constraints
 Fmax = 15; % max torque
-thmax = deg2rad(15); % max allowable lean angle
+thmax = deg2rad(100); % max allowable lean angle
+dphimax = 100; % max ball velocity rad/s
 
 % MPC initial and desired final conditions
 q0 = [0; 0; 0; 0];
-qdes = [100; 0; 0; 0];
+qdes = [6/0.125; 0; 0; 0];
 
 % simulation parameters
 Tfinal = 10; % total simulation time
@@ -33,10 +36,10 @@ for iter = 1:numel(t_sim)
     % Set up direct collocation from current position
     H = Hfunc(Q,R,qdes,T);
     c = cfunc(Q,R,qdes,T);
-    A = Afunc(T,Fmax,thmax);
-    b = bfunc(T,Fmax,thmax);
-    Aeq = Aeqfunc(q0,T,Fmax,thmax);
-    beq = beqfunc(q0,T,Fmax,thmax);
+    A = Afunc(T,Fmax,thmax,dphimax);
+    b = bfunc(T,Fmax,thmax,dphimax);
+    Aeq = Aeqfunc(q0,T,Fmax,thmax,dphimax);
+    beq = beqfunc(q0,T,Fmax,thmax,dphimax);
 
     % Get optimal trajectory and inputs
     xstar = quadprog(H,c,A,b,Aeq,beq, [], [], [], options);
@@ -58,7 +61,8 @@ end
 
 
 %% Plotting and Animation
-plot(t_all, q_all);
-legend("\phi", "d\phi", "\theta", "d\theta")
+animate2D(t_all, q_all(:, 1), q_all(:, 3), 'MPC_2D.mp4')
 
-animate2D(t_all, q_all(:, 1), q_all(:, 3), 'MPC_2D.mp4');
+figure
+plot(t_all, q_all)
+legend("\phi", "d\phi", "\theta", "d\theta")

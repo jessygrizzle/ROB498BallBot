@@ -5,23 +5,26 @@ close all
 % MPC cost parameters
 Q = zeros(4,4);
 Q(1,1) = 1; % penalty on ball angle (position)
+Q(2,2) = 0; % penalty on ball velocity
 Q(3,3) = 1000; % penalty on lean angle
+Q(4,4) = 0; % penalty on lean velocity
 R = 1; % penalty on torque
 
 % MPC time parameters
-T = 5; % finite time horizon
+T = 8; % finite time horizon
 Ts = 0.1; % sample time
 
 % MPC limit constraints
 Fmax = 15; % max torque
-thmax = deg2rad(15); % max allowable lean angle
-dphimax = 15; % max ball velocity rad/s
+thmax = deg2rad(100); % max allowable lean angle
+dphimax = 100; % max ball velocity rad/s
 
 % MPC initial and desired final conditions
+r_k = 0.125; % Ball radius
 q0x = [0; 0; 0; 0];
-qdesx = [30; 0; 0; 0];
+qdesx = [6/0.125; 0; 0; 0];
 q0y = [0; 0; 0; 0];
-qdesy = [10; 0; 0; 0];
+qdesy = [2/0.125; 1; 0; 0];
 
 % simulation parameters
 Tfinal = 10; % total simulation time
@@ -77,7 +80,8 @@ end
 
 
 %% Plotting and Animation
-plot(t_all, q_all);
-legend("\phi x", "d\phi x", "\theta x", "d\theta x", "\phi y", "d\phi y", "\theta y", "d\theta y")
+animate3D(t_all, q_all(:,1), q_all(:,5), q_all(:,3), q_all(:,7), 'MPC_3D.mp4')
 
-animate3D(t_all, q_all(:,1), q_all(:,5), q_all(:,3), q_all(:,7));
+figure
+plot(t_all, q_all)
+legend("\phi x", "d\phi x", "\theta x", "d\theta x", "\phi y", "d\phi y", "\theta y", "d\theta y")

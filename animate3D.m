@@ -1,6 +1,5 @@
 function [] = animate3D(t, phi_x, phi_y, th_x, th_y, title)
 % Animate according to provided timestamps and positions
-
 r_k = 0.125;        % Ball radius
 r_w = 0.06;         % Omniwheel radius
 l = 0.339;          % Height of center of gravity
@@ -19,6 +18,7 @@ th_y_anim = interp1(t, th_y, t_anim);
 psi_x_anim = interp1(t, psi_x, t_anim);
 psi_y_anim = interp1(t, psi_y, t_anim);
 
+
 %% Generate a mesh of a sphere to represent the basketball
 u = linspace(0, pi, 20);
 v = linspace(0, 2*pi, 40);
@@ -29,6 +29,7 @@ bball = ball_func(r_k, bball_U(:), bball_V(:))';
 
 mass_func = @(r, u, v) [r.*sin(u).*cos(v), r.*sin(u).*sin(v), r.*cos(u)+l];
 pmass = mass_func(0.02, bball_U(:), bball_V(:))';
+
 
 %% Generate meshes of the wheels
 u = linspace(-0.0125, 0.0125, 2);
@@ -42,8 +43,7 @@ wheel_y_func = @(r, u, v) [u, r.*sin(v), r.*cos(v)];
 wheel_y = wheel_y_func(r_w, wheel_U(:), wheel_V(:))';
 
 
-%%
-
+%% Calculate positions and record animation
 v = VideoWriter(title, 'MPEG-4');
 open(v);
 
