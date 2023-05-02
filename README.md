@@ -13,6 +13,15 @@ Helper functions
 - `animate2D` animates planar system and writes .mp4 of animation. 
 - `animate3D` animates full system and writes .mp4 of animation. 
 - `transform_3D` generates transformation matrix from translation vector and Euler angles. Used by `animate3D`. 
-- `modelValidation` simulates planar system from different initial conditions and plots output energies and states. 
-- `modelValidation3D` simulates full system from different initial conditions and plots output energies and states.
+- `modelValidation` simulates planar system from different initial conditions and plots output energies. 
+- `modelValidation3D` simulates full system from different initial conditions and plots output energies.
 - `calculateEnergies` calculates energies of planar system.
+
+Generated functions
+- `Hfunc` generates matrix for quadratic term in QP cost.
+- `cfunc` generates vector for linear term in QP cost.
+- `Afunc` generates inequality constraint matrix for QP constraints.
+- `bfunc` generates inequality constraint vector for QP constraints.
+- `Aeqfunc` generates equality constraint matrix for QP constraints. 
+- `beqfunc` generates equality constraint vector for QP constraints. 
+- `dynamfunc` state space dynamics function for ball bot.
