@@ -12,7 +12,7 @@ Helper functions
 - `genfunctions.m` generates dynamics functions and functions for running MPC.
 - `animate2D.m` animates planar system and writes .mp4 of animation. 
 - `animate3D.m` animates full system and writes .mp4 of animation. 
-- `transform_3D.m` generates transformation matrix from translation vector and Euler angles. Used by `animate3D`. 
+- `transform_3D.m` generates transformation matrix from translation vector and Euler angles. Used by `animate3D.m`. 
 - `modelValidation.m` simulates planar system from different initial conditions and plots output energies. 
 - `modelValidation3D.m` simulates full system from different initial conditions and plots output energies.
 - `calculateEnergies.m` calculates energies of planar system.
