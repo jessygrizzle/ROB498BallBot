@@ -15,12 +15,16 @@ Gxoverth = Gx/Gth
 
 [num,den]=numden(Gxoverth)
 
+den = vpa( (den / 615669123084111450535983316992), 5)
+
+num = vpa( (num / 615669123084111450535983316992), 5)
+
 
 % Gx = 1.223e+15/(s^2*(5.6295e+14*s^2 - 8.0095e+15)) - 0.089505/s^2
 
 % Gx = vpa(1/(s^2*((5.6295e+14/1.223e+15)*s^2 - 8.0095e+15/1.223e+15)) - 0.089505/s^2, 5)
 
-Gs = simplify(Gs)
+Gx = simplify(Gx)
 
 [num,den]=numden(Gs)
 

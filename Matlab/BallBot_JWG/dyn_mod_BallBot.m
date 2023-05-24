@@ -1,7 +1,7 @@
 function [D,C,G,B,JacG] = dyn_mod_BallBot(q,dq)
 %DYN_MOD_BALLBOT
 
-%24-May-2023 16:58:49
+%24-May-2023 18:22:00
 
 
 %
@@ -47,7 +47,6 @@ G(2)=0;
 B=zeros(2,1);
 B(1)=R/r;
 B(2)=-1/r;
-%
 %
 %
 %

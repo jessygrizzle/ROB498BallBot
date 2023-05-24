@@ -74,9 +74,9 @@ pcm = (mBall * pBall + mBot * pBot_centermass)/(mBall+mBot)
 vcm = jacobian(pcm,q)*dq;
 %
 %
-KEcm = simplify((1/2)*(mBall+mBot)*vcm.'*vcm)
+KEcm = simplify((1./2.)*(mBall+mBot)*vcm.'*vcm)
 
-KErotation=simplify((1/2)*Jbot*(thBot)^2 + (1/2)*Jball*(dthBall+ dthBot)^2) +(1/2)*Jwheels*(dthWheel)^2
+KErotation=simplify((1./2.)*Jbot*(thBot)^2 + (1/2)*Jball*(dthBall+ dthBot)^2) +(1/2)*Jwheels*(dthWheel)^2
 %
 KE = (KEcm+KErotation);
 KE = simplify(KE)
